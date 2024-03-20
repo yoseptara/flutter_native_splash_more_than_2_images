@@ -56,11 +56,13 @@ void _createAndroidSplash({
   required String? android12BackgroundColor,
   required String? android12DarkBackgroundColor,
   required String? brandingImagePath,
+  required String? secondBrandingImagePath,
   required String? brandingDarkImagePath,
   required String? color,
   required String? darkColor,
   required String gravity,
   required String brandingGravity,
+  required String secondBrandingGravity,
   required bool fullscreen,
   required String? backgroundImage,
   required String? darkBackgroundImage,
@@ -76,6 +78,8 @@ void _createAndroidSplash({
 
   //create resources for branding image if provided
   _applyImageAndroid(imagePath: brandingImagePath, fileName: 'branding.png');
+
+  _applyImageAndroid(imagePath: secondBrandingImagePath, fileName: 'secondbranding.png');
 
   _applyImageAndroid(
     imagePath: brandingDarkImagePath,
@@ -137,7 +141,9 @@ void _createAndroidSplash({
     launchBackgroundFilePath: _flavorHelper.androidLaunchBackgroundFile,
     showImage: imagePath != null,
     showBranding: brandingImagePath != null,
+    showSecondBranding: secondBrandingImagePath != null,
     brandingGravity: brandingGravity,
+    secondBrandingGravity: secondBrandingGravity,
   );
 
   if (darkColor != null || darkBackgroundImage != null) {
@@ -146,7 +152,9 @@ void _createAndroidSplash({
       launchBackgroundFilePath: _flavorHelper.androidLaunchDarkBackgroundFile,
       showImage: imagePath != null,
       showBranding: brandingImagePath != null,
+      showSecondBranding: secondBrandingImagePath != null,
       brandingGravity: brandingGravity,
+      secondBrandingGravity: secondBrandingGravity,
     );
   }
 
@@ -156,7 +164,9 @@ void _createAndroidSplash({
       launchBackgroundFilePath: _flavorHelper.androidV21LaunchBackgroundFile,
       showImage: imagePath != null,
       showBranding: brandingImagePath != null,
+      showSecondBranding: secondBrandingImagePath != null,
       brandingGravity: brandingGravity,
+      secondBrandingGravity: secondBrandingGravity,
     );
     if (darkColor != null || darkBackgroundImage != null) {
       _applyLaunchBackgroundXml(
@@ -165,7 +175,9 @@ void _createAndroidSplash({
             _flavorHelper.androidV21LaunchDarkBackgroundFile,
         showImage: imagePath != null,
         showBranding: brandingImagePath != null,
+        showSecondBranding: secondBrandingImagePath != null,
         brandingGravity: brandingGravity,
+        secondBrandingGravity: secondBrandingGravity,
       );
     }
   }
@@ -304,9 +316,12 @@ void _applyLaunchBackgroundXml({
   required String gravity,
   required bool showImage,
   bool showBranding = false,
+  bool showSecondBranding = false,
   String brandingGravity = 'bottom',
+  String secondBrandingGravity = 'bottom',
 }) {
   String brandingGravityValue = brandingGravity;
+  String secondBrandingGravityValue = secondBrandingGravity;
   print('[Android]  - $launchBackgroundFilePath');
   final launchBackgroundFile = File(launchBackgroundFilePath);
   launchBackgroundFile.createSync(recursive: true);
@@ -341,6 +356,26 @@ void _applyLaunchBackgroundXml({
         .getElement('bitmap')
         ?.setAttribute('android:gravity', brandingGravityValue);
     items.add(brandingItem);
+  }
+
+  if (showSecondBranding && gravity != secondBrandingGravityValue) {
+    //add branding when splash image and branding image are not at the same position
+    final secondBrandingItem =
+        XmlDocument.parse(_androidSecondBrandingItemXml).rootElement.copy();
+    if (secondBrandingGravityValue == 'topRight') {
+      secondBrandingGravityValue = 'top|right';
+    } else if (secondBrandingGravityValue == 'topLeft') {
+      secondBrandingGravityValue = 'top|left';
+    } else if (secondBrandingGravityValue != 'top') {
+      print(
+        '$secondBrandingGravityValue illegal property defined for the second branding mode. Setting back to default.',
+      );
+      secondBrandingGravityValue = 'top';
+    }
+    secondBrandingItem
+        .getElement('bitmap')
+        ?.setAttribute('android:gravity', secondBrandingGravityValue);
+    items.add(secondBrandingItem);
   }
 
   launchBackgroundFile.writeAsStringSync(

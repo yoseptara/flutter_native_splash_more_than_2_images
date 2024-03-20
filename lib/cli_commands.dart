@@ -70,6 +70,12 @@ void _createSplashByConfig(Map<String, dynamic> config) {
       _checkImageExists(config: config, parameter: _Parameter.brandingImageIos);
   final String? brandingImageWeb =
       _checkImageExists(config: config, parameter: _Parameter.brandingImageWeb);
+  final String? secondBrandingImage =
+  _checkImageExists(config: config, parameter: _Parameter.secondBrandingImage);
+  final String? secondBrandingImageAndroid = _checkImageExists(
+      config: config, parameter: _Parameter.secondBrandingImageAndroid);
+  final String? secondBrandingImageIos =
+  _checkImageExists(config: config, parameter: _Parameter.secondBrandingImageIos);
   final String? brandingDarkImage = _checkImageExists(
       config: config, parameter: _Parameter.brandingDarkImage);
   final String? brandingDarkImageAndroid = _checkImageExists(
@@ -115,6 +121,8 @@ void _createSplashByConfig(Map<String, dynamic> config) {
       config[_Parameter.androidScreenOrientation] as String?;
   final brandingGravity =
       config[_Parameter.brandingGravity] as String? ?? 'bottom';
+  final secondBrandingGravity =
+      config[_Parameter.secondBrandingGravity] as String? ?? 'top';
   final bool fullscreen = config[_Parameter.fullscreen] as bool? ?? false;
   final String iosContentMode =
       config[_Parameter.iosContentMode] as String? ?? 'center';
@@ -156,12 +164,14 @@ void _createSplashByConfig(Map<String, dynamic> config) {
         darkImagePath: darkImageAndroid ?? darkImage,
         brandingImagePath: brandingImageAndroid ?? brandingImage,
         brandingDarkImagePath: brandingDarkImageAndroid ?? brandingDarkImage,
+        secondBrandingImagePath: secondBrandingImageAndroid ?? secondBrandingImage,
         backgroundImage: backgroundImageAndroid ?? backgroundImage,
         darkBackgroundImage: darkBackgroundImageAndroid ?? darkBackgroundImage,
         color: colorAndroid ?? color,
         darkColor: darkColorAndroid ?? darkColor,
         gravity: gravity,
         brandingGravity: brandingGravity,
+        secondBrandingGravity: secondBrandingGravity,
         fullscreen: fullscreen,
         screenOrientation: androidScreenOrientation,
         android12ImagePath: android12Image,
@@ -189,11 +199,13 @@ void _createSplashByConfig(Map<String, dynamic> config) {
         darkBackgroundImage: darkBackgroundImageIos ?? darkBackgroundImage,
         brandingImagePath: brandingImageIos ?? brandingImage,
         brandingDarkImagePath: brandingDarkImageIos ?? brandingDarkImage,
+        secondBrandingImagePath: secondBrandingImageIos ?? secondBrandingImage ,
         color: colorIos ?? color,
         darkColor: darkColorIos ?? darkColor,
         plistFiles: plistFiles,
         iosContentMode: iosContentMode,
         iosBrandingContentMode: brandingGravity,
+        iosSecondBrandingContentMode: secondBrandingGravity,
         fullscreen: fullscreen,
       );
     } else {
@@ -419,10 +431,14 @@ class _Parameter {
   static const brandingDarkImageIos = 'branding_dark_ios';
   static const brandingDarkImageWeb = 'branding_dark_web';
   static const brandingGravity = 'branding_mode';
+  static const secondBrandingGravity = 'second_branding_mode';
   static const brandingImage = 'branding';
   static const brandingImageAndroid = 'branding_android';
   static const brandingImageIos = 'branding_ios';
   static const brandingImageWeb = 'branding_web';
+  static const secondBrandingImage = 'second_branding';
+  static const secondBrandingImageAndroid = 'second_branding_android';
+  static const secondBrandingImageIos = 'second_branding_ios';
   static const color = 'color';
   static const colorAndroid = "color_android";
   static const colorIos = "color_ios";
@@ -466,10 +482,14 @@ class _Parameter {
     brandingDarkImageIos,
     brandingDarkImageWeb,
     brandingGravity,
+    secondBrandingGravity,
     brandingImage,
     brandingImageAndroid,
     brandingImageIos,
     brandingImageWeb,
+    secondBrandingImage,
+    secondBrandingImageAndroid,
+    secondBrandingImageIos,
     color,
     colorAndroid,
     colorIos,

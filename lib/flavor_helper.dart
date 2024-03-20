@@ -90,6 +90,10 @@ class _FlavorHelper {
     return 'ios/Runner/Assets.xcassets/BrandingImage$_iOSFlavorName.imageset/';
   }
 
+  String get iOSAssetsSecondBrandingImageFolder {
+    return 'ios/Runner/Assets.xcassets/SecondBrandingImage$_iOSFlavorName.imageset/';
+  }
+
   String get iOSLaunchScreenStoryboardFile {
     return 'ios/Runner/Base.lproj/$iOSLaunchScreenStoryboardName.storyboard';
   }
@@ -129,10 +133,25 @@ class _FlavorHelper {
     }
   }
 
+  String get iOSSecondBrandingImageName {
+    if (_iOSFlavorName == null) {
+      return 'SecondBrandingImage';
+    } else {
+      return 'SecondBrandingImage$_iOSFlavorName';
+    }
+  }
+
   String get iOSBrandingSubView {
     return _iOSBrandingSubview.replaceAll(
       '[BRANDING_IMAGE_PLACEHOLDER]',
       iOSBrandingImageName,
+    );
+  }
+
+  String get iOSSecondBrandingSubView {
+    return _iOSSecondBrandingSubview.replaceAll(
+      '[SECOND_BRANDING_IMAGE_PLACEHOLDER]',
+      iOSSecondBrandingImageName,
     );
   }
 

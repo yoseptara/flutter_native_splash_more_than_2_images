@@ -14,6 +14,12 @@ const String _androidBrandingItemXml = '''
     </item>
 ''';
 
+const String _androidSecondBrandingItemXml = '''
+    <item>
+        <bitmap android:gravity="center" android:src="@drawable/secondbranding" />
+    </item>
+''';
+
 const String _androidLaunchBackgroundXml = '''
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
@@ -256,6 +262,32 @@ const String _iOSBrandingContentsJson = '''
 }
 ''';
 
+const String _iOSSecondBrandingContentsJson = '''
+{
+  "images" : [
+    {
+      "filename" : "SecondBrandingImage.png",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "SecondBrandingImage@2x.png",
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "filename" : "SecondBrandingImage@3x.png",
+      "idiom" : "universal",
+      "scale" : "3x"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
+''';
+
 const String _iOSBrandingContentsJsonDark = '''
 {
   "images" : [
@@ -370,6 +402,9 @@ const String _iOSLaunchBackgroundSubview =
 const String _iOSBrandingSubview =
     '<imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" image="[BRANDING_IMAGE_PLACEHOLDER]" translatesAutoresizingMaskIntoConstraints="NO" id="Uyq-Kz-ftE" />';
 
+const String _iOSSecondBrandingSubview =
+    '<imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" image="[SECOND_BRANDING_IMAGE_PLACEHOLDER]" translatesAutoresizingMaskIntoConstraints="NO" id="Bxa-Fj-rzK" />';
+
 const String _iOSLaunchBackgroundConstraints = '''
 <constraints>
   <constraint firstItem="YRO-k0-Ey4" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="3T2-ad-Qdv"/>
@@ -403,6 +438,30 @@ const String _iOSBrandingRightBottomConstraints = '''
   <constraint firstAttribute="bottom" secondItem="Uyq-Kz-ftE" secondAttribute="bottom" id="8Yb-q4-8lb"/>                            
 </constraints>
 ''';
+
+const String _iOSBrandingCenterTopConstraints = '''
+<constraints>
+  <constraint firstItem="Bxa-Fj-rzK" firstAttribute="centerX" secondItem="YRO-k0-Ey4" secondAttribute="centerX" id="new1"/>
+  <constraint firstItem="Bxa-Fj-rzK" firstAttribute="top" secondItem="YRO-k0-Ey4" secondAttribute="top" id="new2"/>
+</constraints>
+''';
+
+
+const String _iOSBrandingLeftTopConstraints = '''
+<constraints>
+  <constraint firstItem="Bxa-Fj-rzK" firstAttribute="leading" secondItem="YRO-k0-Ey4" secondAttribute="leading" id="new3"/>
+  <constraint firstItem="Bxa-Fj-rzK" firstAttribute="top" secondItem="YRO-k0-Ey4" secondAttribute="top" id="new4"/>
+</constraints>
+''';
+
+
+const String _iOSBrandingRightTopConstraints = '''
+<constraints>
+  <constraint firstItem="Bxa-Fj-rzK" firstAttribute="trailing" secondItem="YRO-k0-Ey4" secondAttribute="trailing" id="new5"/>
+  <constraint firstItem="Bxa-Fj-rzK" firstAttribute="top" secondItem="YRO-k0-Ey4" secondAttribute="top" id="new6"/>
+</constraints>
+''';
+
 
 /// Web related templates
 const String _webCss = '''

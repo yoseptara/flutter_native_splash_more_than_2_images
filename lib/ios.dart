@@ -36,6 +36,17 @@ final List<_IosLaunchImageTemplate> _iOSBrandingImages =
     pixelDensity: 3,
   ), // original image must be @4x
 ];
+
+final List<_IosLaunchImageTemplate> _iOSSecondBrandingImages =
+<_IosLaunchImageTemplate>[
+  _IosLaunchImageTemplate(fileName: 'SecondBrandingImage.png', pixelDensity: 1),
+  _IosLaunchImageTemplate(fileName: 'SecondBrandingImage@2x.png', pixelDensity: 2),
+  _IosLaunchImageTemplate(
+    fileName: 'SecondBrandingImage@3x.png',
+    pixelDensity: 3,
+  ), // original image must be @4x
+];
+
 final List<_IosLaunchImageTemplate> _iOSBrandingImagesDark =
     <_IosLaunchImageTemplate>[
   _IosLaunchImageTemplate(fileName: 'BrandingImageDark.png', pixelDensity: 1),
@@ -56,11 +67,13 @@ void _createiOSSplash({
   required String? darkImagePath,
   String? brandingImagePath,
   String? brandingDarkImagePath,
+  String? secondBrandingImagePath,
   required String? color,
   required String? darkColor,
   List<String>? plistFiles,
   required String iosContentMode,
   String? iosBrandingContentMode,
+  String? iosSecondBrandingContentMode,
   required bool fullscreen,
   required String? backgroundImage,
   required String? darkBackgroundImage,
@@ -103,6 +116,20 @@ void _createiOSSplash({
           .delete(recursive: true);
     }
   }
+
+  if (secondBrandingImagePath != null) {
+    _applyImageiOS(
+      imagePath: secondBrandingImagePath,
+      list: _iOSSecondBrandingImages,
+      targetPath: _flavorHelper.iOSAssetsSecondBrandingImageFolder,
+    );
+  } else {
+    if (Directory(_flavorHelper.iOSAssetsSecondBrandingImageFolder).existsSync()) {
+      Directory(_flavorHelper.iOSAssetsSecondBrandingImageFolder)
+          .delete(recursive: true);
+    }
+  }
+
   if (brandingDarkImagePath != null) {
     _applyImageiOS(
       imagePath: brandingDarkImagePath,
@@ -117,6 +144,8 @@ void _createiOSSplash({
       if (file.existsSync()) file.deleteSync();
     }
   }
+
+
 
   final launchImageFile =
       File('${_flavorHelper.iOSAssetsLaunchImageFolder}Contents.json');
@@ -136,11 +165,22 @@ void _createiOSSplash({
     );
   }
 
+  if (secondBrandingImagePath != null) {
+    final secondBrandingImageFile =
+    File('${_flavorHelper.iOSAssetsSecondBrandingImageFolder}Contents.json');
+    secondBrandingImageFile.createSync(recursive: true);
+    secondBrandingImageFile.writeAsStringSync(
+      _iOSSecondBrandingContentsJson,
+    );
+  }
+
   _createLaunchScreenStoryboard(
     imagePath: imagePath,
     brandingImagePath: brandingImagePath,
+    secondBrandingImagePath: secondBrandingImagePath,
     iosContentMode: iosContentMode,
     iosBrandingContentMode: iosBrandingContentMode,
+    iosSecondBrandingContentMode: iosSecondBrandingContentMode,
   );
   _createBackground(
     colorString: color,
@@ -209,9 +249,12 @@ void _updateLaunchScreenStoryboard({
   required String? imagePath,
   required String iosContentMode,
   String? brandingImagePath,
+  String? secondBrandingImagePath,
   String? iosBrandingContentMode,
+  String? iosSecondBrandingContentMode,
 }) {
   String? iosBrandingContentModeValue = iosBrandingContentMode;
+  String? iosSecondBrandingContentModeValue = iosSecondBrandingContentMode;
   // Load the data
   final file = File(_flavorHelper.iOSLaunchScreenStoryboardFile);
   final xmlDocument = XmlDocument.parse(file.readAsStringSync());
@@ -275,6 +318,13 @@ void _updateLaunchScreenStoryboard({
       .contains(iosBrandingContentModeValue)) {
     iosBrandingContentModeValue = 'bottom';
   }
+
+
+  if (!['top', 'topRight', 'topLeft']
+      .contains(iosSecondBrandingContentModeValue)) {
+    iosSecondBrandingContentModeValue = 'top';
+  }
+
   if (brandingImagePath != null &&
       iosBrandingContentModeValue != iosContentMode) {
     final brandingImageView =
@@ -295,6 +345,28 @@ void _updateLaunchScreenStoryboard({
     );
 
     brandingImageView.setAttribute('contentMode', iosBrandingContentMode);
+  }
+
+  if (secondBrandingImagePath != null &&
+      iosSecondBrandingContentModeValue != iosContentMode) {
+    final secondBrandingImageView =
+        subViews.children.whereType<XmlElement>().firstWhere(
+      (element) {
+        return element.name.qualified == 'imageView' &&
+            element.getAttribute('image') == _flavorHelper.iOSSecondBrandingImageName;
+      },
+      orElse: () {
+        subViews.children.insert(
+          subViews.children.length - 1,
+          XmlDocument.parse(_flavorHelper.iOSSecondBrandingSubView)
+              .rootElement
+              .copy(),
+        );
+        return XmlElement(XmlName(''));
+      },
+    );
+
+    secondBrandingImageView.setAttribute('contentMode', iosSecondBrandingContentMode);
   }
   // Find the resources
   final resources = documentData?.getElement('resources');
@@ -385,6 +457,47 @@ void _updateLaunchScreenStoryboard({
     }
   }
 
+  if (secondBrandingImagePath != null) {
+    final secondBrandingImageResource =
+    resources?.children.whereType<XmlElement>().firstWhere(
+          (element) =>
+      element.name.qualified == 'image' &&
+          element.getAttribute('name') == _flavorHelper.iOSSecondBrandingImageName,
+      orElse: () {
+        resources.children.add(
+          XmlDocument.parse(
+            '<image name="${_flavorHelper.iOSSecondBrandingImageName}" width="1" height="1"/>',
+          ).rootElement.copy(),
+        );
+        return XmlElement(XmlName(''));
+      },
+    );
+
+    final secondBranding = decodeImage(File(secondBrandingImagePath).readAsBytesSync());
+    if (secondBranding == null) {
+      print('$secondBrandingImagePath could not be loaded.');
+      exit(1);
+    }
+    secondBrandingImageResource?.setAttribute('width', secondBranding.width.toString());
+    secondBrandingImageResource?.setAttribute('height', secondBranding.height.toString());
+
+    var toParse = _iOSBrandingCenterTopConstraints;
+    if (iosSecondBrandingContentModeValue == 'topLeft') {
+      toParse = _iOSBrandingLeftTopConstraints;
+    } else if (iosSecondBrandingContentModeValue == 'topRight') {
+      toParse = _iOSBrandingRightTopConstraints;
+    }
+    final element = view.getElement('constraints');
+
+    final doc = XmlDocument.parse(toParse).rootElement.copy();
+    if (doc.firstChild != null) {
+      print('[iOS] updating constraints with splash branding');
+      for (final v in doc.children) {
+        element?.children.insert(0, v.copy());
+      }
+    }
+  }
+
   file.writeAsStringSync(
     '${xmlDocument.toXmlString(pretty: true, indent: '    ')}\n',
   );
@@ -395,7 +508,9 @@ void _createLaunchScreenStoryboard({
   required String? imagePath,
   required String iosContentMode,
   required String? iosBrandingContentMode,
+  required String? iosSecondBrandingContentMode,
   required String? brandingImagePath,
+  required String? secondBrandingImagePath,
 }) {
   final file = File(_flavorHelper.iOSLaunchScreenStoryboardFile);
   file.createSync(recursive: true);
@@ -404,8 +519,10 @@ void _createLaunchScreenStoryboard({
   return _updateLaunchScreenStoryboard(
     imagePath: imagePath,
     brandingImagePath: brandingImagePath,
+    secondBrandingImagePath: secondBrandingImagePath,
     iosContentMode: iosContentMode,
     iosBrandingContentMode: iosBrandingContentMode,
+    iosSecondBrandingContentMode: iosSecondBrandingContentMode,
   );
 }
 
